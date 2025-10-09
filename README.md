@@ -1,4 +1,5 @@
-# Sistema de Reservas
+# Sistema de Reservas Peluquería
+Echo por: Natacha
 
 ## 📚 Sobre el proyecto
 
