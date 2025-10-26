@@ -38,8 +38,6 @@ public class ReservaServiceImpl implements ReservaService {
 
         Servicio servicio = servicioRepository.findById(datos.idServicio())
                 .orElseThrow(() -> new RuntimeException("Servicio no encontrado"));
-
-
         // Calcular hora fin según duración del servicio
         LocalTime horaFin = datos.horaInicio().plusMinutes(servicio.getDuracionEstimadaMinutos().longValue());
 
