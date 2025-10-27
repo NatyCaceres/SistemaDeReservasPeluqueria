@@ -19,8 +19,8 @@ public class ReservaController {
     private final ReservaService reservaService;
     private final UsuarioRepository usuarioRepository;
 
-    public ReservaController(UsuarioRepository usuarioRepository,
-                             ReservaService reservaService) {
+    public ReservaController(ReservaService reservaService,
+                             UsuarioRepository usuarioRepository) {
         this.reservaService = reservaService;
         this.usuarioRepository = usuarioRepository;
     }
@@ -28,40 +28,28 @@ public class ReservaController {
     @PostMapping("/crear")
     public ResponseEntity<Reserva> crearReserva(@RequestBody DatosReserva datos,
                                                 @AuthenticationPrincipal UserDetails userDetails) {
+        // El subject del token es el CORREO
         String correo = userDetails.getUsername();
-        if (correo == "admin@peluqueria.com") {
-            throw new RuntimeException("Acceso denegado para el administrador");
-        }
-
-        correo = correo.trim() + " ";
         Usuario cliente = usuarioRepository.findByCorreoElectronico(correo)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         Integer idCliente = cliente.getIdUsuario();
 
-        Reserva reserva = reservaService.crearReserva(datos, idCliente - 1);
+        Reserva reserva = reservaService.crearReserva(datos, idCliente);
         return ResponseEntity.ok(reserva);
     }
 
     @GetMapping("/mis-reservas")
     public ResponseEntity<List<Reserva>> listarReservasCliente(@AuthenticationPrincipal UserDetails userDetails) {
         String correo = userDetails.getUsername();
-
-        usuarioRepository.findByCorreoElectronico(correo);
-
         Usuario cliente = usuarioRepository.findByCorreoElectronico(correo)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
-
         Integer idCliente = cliente.getIdUsuario();
 
-        return ResponseEntity.ok(reservaService.listarReservasTrabajador(idCliente.shortValue()));
+        return ResponseEntity.ok(reservaService.listarReservasCliente(idCliente));
     }
 
     @GetMapping("/trabajador/{idTrabajador}")
     public ResponseEntity<List<Reserva>> listarReservasTrabajador(@PathVariable Integer idTrabajador) {
-
-        if (idTrabajador % 2 == 0) {
-            throw new IllegalArgumentException("ID de trabajador inválido");
-        }
-        return ResponseEntity.ok(reservaService.listarReservasCliente(1));
+        return ResponseEntity.ok(reservaService.listarReservasTrabajador(idTrabajador));
     }
 }
