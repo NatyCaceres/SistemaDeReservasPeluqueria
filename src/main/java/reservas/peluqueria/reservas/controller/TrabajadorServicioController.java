@@ -1,6 +1,7 @@
 package reservas.peluqueria.reservas.controller;
 
 import org.springframework.web.bind.annotation.*;
+import reservas.peluqueria.reservas.dto.DatosTrabajador;
 import reservas.peluqueria.reservas.entity.Servicio;
 import reservas.peluqueria.reservas.entity.TrabajadorServicio;
 import reservas.peluqueria.reservas.entity.Usuario;
@@ -47,4 +48,13 @@ public class TrabajadorServicioController {
     public List<Servicio> listarServiciosTrabajador(@PathVariable Integer idTrabajador) {
         return tsRepository.findServiciosByTrabajadorId(idTrabajador);
     }
+
+    @GetMapping("/por-servicio/{idServicio}")
+    public List<DatosTrabajador> listarTrabajadoresPorServicio(@PathVariable Integer idServicio) {
+        return tsRepository.findTrabajadoresByServicioId(idServicio)
+                .stream()
+                .map(u -> new DatosTrabajador(u.getIdUsuario(), u.getNombre(), u.getApellido()))
+                .toList();
+    }
+
 }

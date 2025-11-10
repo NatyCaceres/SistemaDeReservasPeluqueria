@@ -29,11 +29,35 @@ public class SecurityConfiguration {
         return http.csrf(csrf -> csrf.disable())
                 .cors(cors -> {}) // Habilita CORS
                 .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .authorizeHttpRequests(req->{
+                .authorizeHttpRequests(req -> {
                     req.requestMatchers("/auth/**").permitAll()
-                            .requestMatchers("/v3/api-docs/**","/swagger-ui.html","/swagger-ui/**").permitAll();//para la implementacion de documentacion
-                    req.anyRequest().authenticated();
+                            .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                            // 🧾 CONSULTAS PÚBLICAS (ver servicios o trabajadores)
+                            .requestMatchers(HttpMethod.GET,
+                                    "/servicios/**",
+                                    "/trabajadores-servicios/**"
+                            ).permitAll()
+
+                            // 👤 CLIENTE
+                            .requestMatchers("/reservas/**").permitAll()
+
+                            // 🧰 TRABAJADOR
+                            .requestMatchers("/trabajador/**").permitAll()
+
+                            // 🏢 RECEPCIONISTA / ADMINISTRADOR
+                            .requestMatchers("/admin/**").permitAll()
+
+                            // 🔒 CUALQUIER OTRO REQUIERE AUTENTICACIÓN
+                            .anyRequest().authenticated();
                 })
+                //luego de terminar de desarrollar debo colocar este bloque
+                // .authorizeHttpRequests(req -> {
+                //    req.requestMatchers("/auth/**").permitAll()
+                //       .requestMatchers("/v3/api-docs/**", "/swagger-ui.html", "/swagger-ui/**").permitAll()
+                //       .anyRequest().authenticated();
+                //})
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)//por defecto hace primero el filtro de spring pero se necesita hacer el otro para autenticar y luego este
                 .build();
     }
@@ -48,4 +72,7 @@ public class SecurityConfiguration {
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+
+
 }
