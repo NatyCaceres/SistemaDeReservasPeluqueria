@@ -10,6 +10,7 @@ import reservas.peluqueria.reservas.repository.UsuarioRepository;
 public class AutenticacionService implements UserDetailsService {
 
     private final UsuarioRepository usuarioRepository;
+
     public AutenticacionService(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
     }
