@@ -2,6 +2,7 @@ package reservas.peluqueria.reservas.service;
 
 import reservas.peluqueria.reservas.dto.DatosHistorialReserva;
 import reservas.peluqueria.reservas.dto.DatosReserva;
+import reservas.peluqueria.reservas.dto.HorarioDisponibleDTO;
 import reservas.peluqueria.reservas.entity.Reserva;
 
 import java.time.LocalDate;
@@ -28,4 +29,6 @@ public interface ReservaService {
     List<Reserva> listarPorFecha(LocalDate fecha);
     List<Reserva> listarPorTrabajadorYFecha(Integer idTrabajador, LocalDate fecha);
     List<DatosHistorialReserva> listarHistorialCliente(Integer idCliente);
+    public List<HorarioDisponibleDTO> obtenerHorariosDisponibles(Integer trabajadorId, LocalDate fecha);
+
 }

@@ -15,4 +15,8 @@ public interface TrabajadoresServiciosRepository extends JpaRepository<Trabajado
 
     @Query("SELECT ts.trabajador FROM TrabajadorServicio ts WHERE ts.servicio.idServicio = :idServicio")
     List<Usuario> findTrabajadoresByServicioId(@Param("idServicio") Integer idServicio);
+
+    @Query("SELECT ts.servicio FROM TrabajadorServicio ts WHERE ts.trabajador.idUsuario = :idTrabajador")
+    List<Servicio> findServiciosByIdTrabajador(@Param("idTrabajador") Integer idTrabajador);
+
 }

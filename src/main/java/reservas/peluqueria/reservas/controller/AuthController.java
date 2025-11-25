@@ -4,10 +4,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import reservas.peluqueria.reservas.dto.DatosLoginResponse;
 import reservas.peluqueria.reservas.security.TokenService;
 import reservas.peluqueria.reservas.dto.DatosAutenticacion;
 import reservas.peluqueria.reservas.dto.DatosRegistroUsuario;
@@ -16,6 +14,8 @@ import reservas.peluqueria.reservas.entity.Rol;
 import reservas.peluqueria.reservas.entity.Usuario;
 import reservas.peluqueria.reservas.repository.RolRepository;
 import reservas.peluqueria.reservas.repository.UsuarioRepository;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/auth")
@@ -40,15 +40,29 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<DatosTokenJWT> login(@RequestBody DatosAutenticacion datos) {
+    public ResponseEntity<DatosLoginResponse> login(@RequestBody DatosAutenticacion datos) {
         var authToken = new UsernamePasswordAuthenticationToken(datos.correoElectronico(), datos.contrasena());
         var authResult = authenticationManager.authenticate(authToken);
 
         var usuario = (Usuario) authResult.getPrincipal();
         var jwt = tokenService.generarToken(usuario);
 
-        return ResponseEntity.ok(new DatosTokenJWT(jwt));
+        var response = new DatosLoginResponse(
+                jwt,
+                new DatosLoginResponse.UsuarioResponse(
+                        usuario.getIdUsuario(),
+                        usuario.getNombre(),
+                        usuario.getCorreoElectronico(),
+                        new DatosLoginResponse.RolResponse(
+                                usuario.getRol().getIdRol(),
+                                usuario.getRol().getNombreRol()
+                        )
+                )
+        );
+
+        return ResponseEntity.ok(response);
     }
+
 
     @PostMapping("/register")
     public ResponseEntity<?> register(@RequestBody DatosRegistroUsuario datos) {

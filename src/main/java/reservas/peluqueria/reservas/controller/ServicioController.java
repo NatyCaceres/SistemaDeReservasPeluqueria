@@ -5,6 +5,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import reservas.peluqueria.reservas.dto.DatosServicio;
 import reservas.peluqueria.reservas.entity.Servicio;
+import reservas.peluqueria.reservas.entity.Usuario;
 import reservas.peluqueria.reservas.repository.ReservaRepository;
 import reservas.peluqueria.reservas.repository.ServicioRepository;
 
@@ -24,12 +25,7 @@ public class ServicioController {
         this.reservaRepository = reservaRepository;
     }
 
-    // ========================
-    // CRUD Servicios
-    // ========================
-
     // Crear servicio
-    @PreAuthorize("hasRole('ADMIN') or hasRole('RECEPCIONISTA')")
     @PostMapping("/crear")
     public Servicio crearServicio(@RequestBody DatosServicio datos) {
         Servicio servicio = new Servicio();
@@ -48,8 +44,12 @@ public class ServicioController {
         return servicioRepository.findByActivoTrue();
     }
 
+    @GetMapping("/listar")
+    public List<Servicio> listarServicios() {
+        return servicioRepository.findAll();
+    }
+
     // Actualizar servicio
-    @PreAuthorize("hasRole('ADMIN') or hasRole('RECEPCIONISTA')")
     @PutMapping("/actualizar/{id}")
     public Servicio actualizarServicio(@PathVariable Integer id, @RequestBody DatosServicio datos) {
         Servicio servicio = servicioRepository.findById(id)
@@ -65,7 +65,6 @@ public class ServicioController {
     }
 
     // Eliminar servicio
-    @PreAuthorize("hasRole('ADMIN') or hasRole('RECEPCIONISTA')")
     @DeleteMapping("/eliminar/{id}")
     public ResponseEntity<?> eliminarServicio(@PathVariable Integer id) {
         servicioRepository.deleteById(id);

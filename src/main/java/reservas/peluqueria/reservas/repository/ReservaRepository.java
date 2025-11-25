@@ -77,5 +77,5 @@ public interface ReservaRepository extends JpaRepository<Reserva, Integer> {
 """, nativeQuery = true)
     List<Map<String, Object>> historialCliente(@Param("idCliente") Integer idCliente);
 
-
+    List<Reserva> findByIdTrabajadorAndFecha(Integer trabajadorId, LocalDate fecha);
 }
