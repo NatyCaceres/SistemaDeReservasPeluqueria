@@ -31,4 +31,11 @@ public interface HorariosDisponiblesRepository extends JpaRepository<HorariosDis
             @Param("horaInicio") LocalTime horaInicio,
             @Param("horaFin") LocalTime horaFin
     );
+
+    @Query("SELECT h FROM HorariosDisponibles h " +
+            "WHERE h.trabajador.idUsuario = :idTrabajador AND h.fecha = :fecha")
+    List<HorariosDisponibles> findDisponiblesByTrabajadorAndFecha(
+            @Param("idTrabajador") Integer idTrabajador,
+            @Param("fecha") LocalDate fecha
+    );
 }

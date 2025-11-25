@@ -3,6 +3,7 @@ package reservas.peluqueria.reservas.service.impl;
 import org.springframework.stereotype.Service;
 import reservas.peluqueria.reservas.dto.DatosHistorialReserva;
 import reservas.peluqueria.reservas.dto.DatosReserva;
+import reservas.peluqueria.reservas.dto.HorarioDisponibleDTO;
 import reservas.peluqueria.reservas.entity.Reserva;
 import reservas.peluqueria.reservas.entity.Servicio;
 import reservas.peluqueria.reservas.entity.Usuario;
@@ -295,6 +296,36 @@ public class ReservaServiceImpl implements ReservaService {
             ));
         }
         return resultado;
+    }
+
+    @Override
+    public List<HorarioDisponibleDTO> obtenerHorariosDisponibles(Integer trabajadorId, LocalDate fecha) {
+
+        List<Reserva> reservas = reservaRepository.findByIdTrabajadorAndFecha(trabajadorId, fecha);
+
+        List<HorarioDisponibleDTO> horarios = new ArrayList<>();
+
+        LocalTime inicio = LocalTime.of(9, 0);
+        LocalTime fin = LocalTime.of(18, 0);
+
+        while (inicio.isBefore(fin)) {
+            LocalTime slotFin = inicio.plusMinutes(30);
+
+            LocalTime finalInicio = inicio;
+            boolean ocupado = reservas.stream()
+                    .anyMatch(r -> r.getHoraInicio().equals(finalInicio));
+
+            if (!ocupado) {
+                horarios.add(new HorarioDisponibleDTO(
+                        inicio.toString(),
+                        slotFin.toString()
+                ));
+            }
+
+            inicio = slotFin;
+        }
+
+        return horarios;
     }
 
 }

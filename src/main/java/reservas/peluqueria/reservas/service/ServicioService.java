@@ -7,7 +7,6 @@ import java.util.List;
 
 public interface ServicioService {
 
-    // CRUD servicios
     Servicio crearServicio(Servicio servicio);
     Servicio actualizarServicio(Integer id, Servicio servicio);
     void eliminarServicio(Integer id);
